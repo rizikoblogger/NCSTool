@@ -1,0 +1,12 @@
+/**
+ * 
+##################################################################################
+This directory must have tools made by developers to support repeatable actions.
+Note: It is forbidden to put here business rules!
+Business rules must be put into '...rules' package.
+##################################################################################
+ *
+ * @author Rogerio
+ *
+ */
+package br.com.riziko.ncs.tool;
