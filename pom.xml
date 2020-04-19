@@ -4,13 +4,19 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.riziko</groupId>
 	<artifactId>NCSTools</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven-project-info-reports-plugin>3.0.0</maven-project-info-reports-plugin>
 	</properties>
 	<name>NCSTools</name>
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.mongodb/mongodb-driver -->
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver</artifactId>
+			<version>3.7.1</version>
+		</dependency>
 		<dependency>
 			<groupId>br.com.riziko</groupId>
 			<artifactId>NCSCore</artifactId>
@@ -21,7 +27,7 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<version>1.4.193</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>br.com.riziko.ncs.jpa</groupId>
 			<artifactId>NCSDatabase</artifactId>

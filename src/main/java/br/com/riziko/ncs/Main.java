@@ -3,10 +3,16 @@
  */
 package br.com.riziko.ncs;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+import br.com.riziko.ncs.core.model.digester.Tabl091Digester;
+import br.com.riziko.ncs.core.model.digester.Tabl098Digester;
+import br.com.riziko.ncs.core.model.digester.Tabl120Digester;
+import br.com.riziko.ncs.core.model.digester.Tabl347Digester;
 import br.com.riziko.ncs.core.tool.PropertieReader;
+import br.com.riziko.ncs.core.tool.TraditionalReader;
 import br.com.riziko.ncs.core.tool.TypeConverter;
 
 /**
@@ -20,7 +26,7 @@ public class Main {
 	 * 
 	 * Try java -jar NCSTools.jar -h to see more information.
 	 * 
-	 * @param args - see information above.
+	 * @param args - [0] Options, [1] source-file, [2] target format.
 	 */
 	public static void main(String[] args) {
 
@@ -348,10 +354,48 @@ public class Main {
 				findIt = true;
 			}
 			
-			if (args[0].equals("-momentum")) {				;
-				ScriptRunner.main(args);
-				findIt = true;
-			}
+			if (args[0].substring(0,8).equals("-mongodb")) {
+				String option = args[0].substring(8);
+				String collection = args[0].substring(9);
+				TraditionalReader reader = new TraditionalReader();
+				reader.open(args[1],StandardCharsets.UTF_8);
+				if("-tabl091".equals(option)) {
+					Tabl091Digester digester = new Tabl091Digester();
+					String line = "";
+					while ((line = reader.readLine()) != null) {
+						ScriptRunner.insertIntoMongoDB(collection,
+						TypeConverter.convert(digester.digest(line),"json"));
+					}
+					findIt = true;					
+				}
+				if("-tabl098".equals(option)) {
+					Tabl098Digester digester = new Tabl098Digester();
+					String line = "";
+					while ((line = reader.readLine()) != null) {
+						ScriptRunner.insertIntoMongoDB(collection,
+						TypeConverter.convert(digester.digest(line),"json"));
+					}
+					findIt = true;					
+				}
+				if("-tabl120".equals(option)) {
+					Tabl120Digester digester = new Tabl120Digester();
+					String line = "";
+					while ((line = reader.readLine()) != null) {
+						ScriptRunner.insertIntoMongoDB(collection,
+						TypeConverter.convert(digester.digest(line),"json"));
+					}
+					findIt = true;					
+				}
+				if("-tabl347".equals(option)) {
+					Tabl347Digester digester = new Tabl347Digester();
+					String line = "";
+					while ((line = reader.readLine()) != null) {
+						ScriptRunner.insertIntoMongoDB(collection,
+						TypeConverter.convert(digester.digest(line),"json"));
+					}
+					findIt = true;					
+				}
+			}	
 			
 			if (args[0].equals("-params")) {
 				header();
@@ -475,8 +519,8 @@ public class Main {
 		System.out.println("#                                                                   #");
 		System.out.println("# -script - connects to NCSDatabase and runs SQL commands           #");
 		System.out.println("#                                                                   #");
-		System.out.println("# -momentum - creates a snapshoot of the database for prospecting.  #");
-		System.out.println("#                                                                   #");
+		System.out.println("# -mongodb<option> - converts according option. Insert into MongoDB.#");
+		System.out.println("#                                                                   #");		
 		System.out.println("# -params - shows its default parameters from mrd.properties file.  #");
 		footer();
 
@@ -485,14 +529,15 @@ public class Main {
 	private static void header() {
 		System.out.println("\n");
 		System.out.println("#####################################################################");
-		System.out.println("#              NCS Tools version 1.1.0 (April 07, 2019)             #");
+		System.out.println("#              NCS Tools version 0.0.1 (April 07, 2020)             #");
 		System.out.println("#####################################################################");
 		System.out.println("#                                                                   #");
 	}
 
 	private static void footer() {
 		System.out.println("#                                                                   #");
-		System.out.println("# Use: NCSTools.jar -option <source-file> [xml|json|sql|ddl]        #");
+		System.out.println("# Use: NCSTools.jar -option <source-file> [xml|json|sql|ddl] or     #");
+		System.out.println("#      NCSTools.jar -mongodb-<option>                               #");
 		System.out.println("#####################################################################");
 
 		System.out.println("\n");
