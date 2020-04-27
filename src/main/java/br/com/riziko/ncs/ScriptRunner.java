@@ -21,6 +21,13 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.bson.Document;
+import org.bson.codecs.Decoder;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
+
 import br.com.riziko.ncs.core.tool.SplitPipes;
 import br.com.riziko.ncs.core.tool.TraditionalReader;
 import br.com.riziko.ncs.core.tool.TraditionalWriter;
@@ -68,6 +75,7 @@ public class ScriptRunner {
 		connect();
 		if (args[0].equals("-mommentum"))
 			mommentum();
+
 		importProcedure(args[1]);
 
 	}
@@ -139,6 +147,24 @@ public class ScriptRunner {
 			println(Messages.getString("Console.connection.driverNotFound:" + driver));
 
 		}
+		return true;
+	}
+
+	public static boolean insertIntoMongoDB(String collection, StringBuilder json) {
+
+		//init();
+
+		MongoClient mongoClient = MongoClients.create(databaseUri);
+		MongoDatabase database = mongoClient.getDatabase(catalog);
+		
+		try {
+			database.getCollection(collection).insertOne(Document.parse(json.toString()));
+		} catch (Exception e) {
+			System.out.println("Erro de conexao com MongoDB:\n" + e.getMessage());
+			return false;
+		}
+		mongoClient.close();
+
 		return true;
 	}
 
@@ -243,18 +269,18 @@ public class ScriptRunner {
 	private static boolean insertIntoDatabase(Map<String, StringBuilder> tables) {
 
 		boolean success = true;
-		
+
 		println(Messages.getString("Console.menu.content.explanation.1") + Instant.now()); //$NON-NLS-1$
 		Stream<StringBuilder> stream = tables.values().stream();
 
 		for (StringBuilder sb : stream.collect(Collectors.toList())) {
 
 			try (Statement stmt = conn.createStatement()) {
-					String sql = sb.toString();
+				String sql = sb.toString();
 				if (!sql.startsWith("DELETE") && !sql.startsWith("UPDATE"))
 					stmt.executeUpdate(sql);
 				println("- " + sql);
-				
+
 			} catch (SQLException se) {
 				LOGGER.log(Level.SEVERE, se.getMessage());
 				success = false;
@@ -284,7 +310,7 @@ public class ScriptRunner {
 	}
 
 	private static void mommentum() {
-		// TODO: After creating all tables in database
+
 		createTIRDatabase();
 		startVersioning();
 	}
