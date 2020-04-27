@@ -354,11 +354,12 @@ public class Main {
 				findIt = true;
 			}
 			
-			if (args[0].substring(0,8).equals("-mongodb")) {
+			if (args[0].contains("-mongodb")) {
 				String option = args[0].substring(8);
 				String collection = args[0].substring(9);
 				TraditionalReader reader = new TraditionalReader();
-				reader.open(args[1],StandardCharsets.UTF_8);
+				reader.open(args[1],StandardCharsets.UTF_8);				
+				
 				if("-tabl091".equals(option)) {
 					Tabl091Digester digester = new Tabl091Digester();
 					String line = "";
@@ -537,7 +538,7 @@ public class Main {
 	private static void footer() {
 		System.out.println("#                                                                   #");
 		System.out.println("# Use: NCSTools.jar -option <source-file> [xml|json|sql|ddl] or     #");
-		System.out.println("#      NCSTools.jar -mongodb-<option>                               #");
+		System.out.println("#      NCSTools.jar -mongodb-<option>  <source-file>                #");
 		System.out.println("#####################################################################");
 
 		System.out.println("\n");

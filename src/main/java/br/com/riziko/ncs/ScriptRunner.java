@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.bson.Document;
+import org.bson.codecs.Decoder;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -151,17 +152,18 @@ public class ScriptRunner {
 
 	public static boolean insertIntoMongoDB(String collection, StringBuilder json) {
 
-		init();
+		//init();
 
 		MongoClient mongoClient = MongoClients.create(databaseUri);
 		MongoDatabase database = mongoClient.getDatabase(catalog);
-
+		
 		try {
 			database.getCollection(collection).insertOne(Document.parse(json.toString()));
 		} catch (Exception e) {
 			System.out.println("Erro de conexao com MongoDB:\n" + e.getMessage());
 			return false;
 		}
+		mongoClient.close();
 
 		return true;
 	}
