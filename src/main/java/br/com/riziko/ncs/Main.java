@@ -7,10 +7,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+import br.com.riziko.ncs.core.model.digester.NCSEntityDigester;
 import br.com.riziko.ncs.core.model.digester.Tabl091Digester;
 import br.com.riziko.ncs.core.model.digester.Tabl098Digester;
 import br.com.riziko.ncs.core.model.digester.Tabl120Digester;
 import br.com.riziko.ncs.core.model.digester.Tabl347Digester;
+import br.com.riziko.ncs.core.model.tir.NCSEntity;
 import br.com.riziko.ncs.core.tool.PropertieReader;
 import br.com.riziko.ncs.core.tool.TraditionalReader;
 import br.com.riziko.ncs.core.tool.TypeConverter;
@@ -396,7 +398,16 @@ public class Main {
 					}
 					findIt = true;					
 				}
-			}	
+				if("-H4".equals(option)) {
+					NCSEntityDigester entityDigester = new NCSEntityDigester();					
+					for(NCSEntity entity:entityDigester.execute(args[1])) {
+						ScriptRunner.insertIntoMongoDB(collection,
+						TypeConverter.convert(entity,"json"));
+					}
+					
+					findIt = true;					
+				} 
+			}	  
 			
 			if (args[0].equals("-params")) {
 				header();
