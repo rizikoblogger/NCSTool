@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
-
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
@@ -20,6 +19,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.bson.Document;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 
 import br.com.riziko.ncs.core.tool.SplitPipes;
 import br.com.riziko.ncs.core.tool.TraditionalReader;
@@ -44,6 +49,7 @@ import br.com.riziko.ncs.jpa.entity.TVersioning;
 public class ScriptRunner {
 
 	private static final Logger LOGGER = Logger.getLogger(ScriptRunner.class.getName());
+	private static final Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );	
 
 	static Connection conn;
 	static String user;
@@ -54,24 +60,14 @@ public class ScriptRunner {
 
 	static TVersioning tVersioning;
 
-	/**
-	 * This is the Script tools for Database actions.
-	 * 
-	 * Try java -jar NCSTools.jar -h to see more information.
-	 * 
-	 * @param args - option file type
-	 */
-	public static void main(String[] args) {
-
+	public ScriptRunner() {
 		header();
 		init();
 		connect();
-		if (args[0].equals("-mommentum"))
-			mommentum();
-		importProcedure(args[1]);
-
+		Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
+		mongoLogger.setLevel(Level.SEVERE); 
 	}
-
+	
 	private static void header() {
 		println("\n"); //$NON-NLS-1$
 		println(Messages.getString("Console.menu.console.header.1")); //$NON-NLS-1$
@@ -139,6 +135,24 @@ public class ScriptRunner {
 			println(Messages.getString("Console.connection.driverNotFound:" + driver));
 
 		}
+		return true;
+	}
+
+	public boolean insertIntoMongoDB(String collection, StringBuilder json) {
+
+		mongoLogger.setLevel(Level.SEVERE); 
+
+		MongoClient mongoClient = MongoClients.create(databaseUri);
+		MongoDatabase database = mongoClient.getDatabase(catalog);
+		
+		try {
+			database.getCollection(collection).insertOne(Document.parse(json.toString()));
+		} catch (Exception e) {
+			System.out.println("Erro de conexao com MongoDB:\n" + e.getMessage() + "::"+ json.toString());
+			return false;
+		}
+		mongoClient.close();
+
 		return true;
 	}
 
@@ -216,7 +230,7 @@ public class ScriptRunner {
 		return true;
 	}
 
-	private static void importProcedure(String fileName) {
+	public void importProcedure(String fileName) {
 		String line = "";
 		HashMap<String, StringBuilder> lista = new HashMap<>();
 		TraditionalReader reader = new TraditionalReader();
@@ -243,18 +257,18 @@ public class ScriptRunner {
 	private static boolean insertIntoDatabase(Map<String, StringBuilder> tables) {
 
 		boolean success = true;
-		
+
 		println(Messages.getString("Console.menu.content.explanation.1") + Instant.now()); //$NON-NLS-1$
 		Stream<StringBuilder> stream = tables.values().stream();
 
 		for (StringBuilder sb : stream.collect(Collectors.toList())) {
 
 			try (Statement stmt = conn.createStatement()) {
-					String sql = sb.toString();
+				String sql = sb.toString();
 				if (!sql.startsWith("DELETE") && !sql.startsWith("UPDATE"))
 					stmt.executeUpdate(sql);
 				println("- " + sql);
-				
+
 			} catch (SQLException se) {
 				LOGGER.log(Level.SEVERE, se.getMessage());
 				success = false;
@@ -283,8 +297,8 @@ public class ScriptRunner {
 		return tables;
 	}
 
-	private static void mommentum() {
-		// TODO: After creating all tables in database
+	public static void mommentum() {
+
 		createTIRDatabase();
 		startVersioning();
 	}
