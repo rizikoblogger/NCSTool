@@ -228,7 +228,7 @@ public class Main {
 				TypeConverter.convertRNVC(args[1], args[2]);
 				findIt = true;
 			}
-			if (args[0].equals("-ncbCode")) {
+			if (args[0].equals("-ncbCodes")) {
 				TypeConverter.convertNCBCode(args[1], args[2]);
 				findIt = true;
 			}
@@ -352,11 +352,13 @@ public class Main {
 			}
 
 			if (args[0].equals("-script")) {
-				ScriptRunner.main(args);
+				ScriptRunner scriptRunner = new ScriptRunner();
+				scriptRunner.importProcedure(args[1]);
 				findIt = true;
 			}
 			
 			if (args[0].contains("-mongodb")) {
+				ScriptRunner scriptRunner = new ScriptRunner();
 				String option = args[0].substring(8);
 				String collection = args[0].substring(9);
 				TraditionalReader reader = new TraditionalReader();
@@ -366,7 +368,7 @@ public class Main {
 					Tabl091Digester digester = new Tabl091Digester();
 					String line = "";
 					while ((line = reader.readLine()) != null) {
-						ScriptRunner.insertIntoMongoDB(collection,
+						scriptRunner.insertIntoMongoDB(collection,
 						TypeConverter.convert(digester.digest(line),"json"));
 					}
 					findIt = true;					
@@ -375,16 +377,17 @@ public class Main {
 					Tabl098Digester digester = new Tabl098Digester();
 					String line = "";
 					while ((line = reader.readLine()) != null) {
-						ScriptRunner.insertIntoMongoDB(collection,
+						scriptRunner.insertIntoMongoDB(collection,
 						TypeConverter.convert(digester.digest(line),"json"));
 					}
 					findIt = true;					
 				}
 				if("-tabl120".equals(option)) {
+					
 					Tabl120Digester digester = new Tabl120Digester();
 					String line = "";
 					while ((line = reader.readLine()) != null) {
-						ScriptRunner.insertIntoMongoDB(collection,
+						scriptRunner.insertIntoMongoDB(collection,
 						TypeConverter.convert(digester.digest(line),"json"));
 					}
 					findIt = true;					
@@ -393,7 +396,7 @@ public class Main {
 					Tabl347Digester digester = new Tabl347Digester();
 					String line = "";
 					while ((line = reader.readLine()) != null) {
-						ScriptRunner.insertIntoMongoDB(collection,
+						scriptRunner.insertIntoMongoDB(collection,
 						TypeConverter.convert(digester.digest(line),"json"));
 					}
 					findIt = true;					
@@ -401,7 +404,7 @@ public class Main {
 				if("-H4".equals(option)) {
 					NCSEntityDigester entityDigester = new NCSEntityDigester();					
 					for(NCSEntity entity:entityDigester.execute(args[1])) {
-						ScriptRunner.insertIntoMongoDB(collection,
+						scriptRunner.insertIntoMongoDB(collection,
 						TypeConverter.convert(entity,"json"));
 					}
 					
@@ -452,44 +455,44 @@ public class Main {
 		System.out.println("# -H4 - from Seg 8 to NCS Entity before converting to selected one  #");
 		System.out.println("# -kff - converts from KFF Segments format to selected one          #");
 		System.out.println("#                                                                   #");
-		System.out.println("# -niinSC - from Table 01 - NATO Item Identification Nr Status Code #");
-		System.out.println("# -02 - from Table 02 - Return Code (RET CODE)                      #");
-		System.out.println("# -odrc - from Table 03 - Interrogate Output Data Request Code(ODRC)#");
-		System.out.println("# -dac - from  Table 05 - Document Availability Code(DAC)           #");
-		System.out.println("# -RNJC - from Table 06 - Reference Number Justification Code(RNJC) #");
-		System.out.println("# -pic - from Table 07 - Priority Indicator Code (PIC)              #");
-		System.out.println("# -RNCC - from Table 08 - Reference Number Category Code (RNCC)     #");
-		System.out.println("# -RNFC - from Table 09 - Reference Number Format Code (RNFC)       #");
+		System.out.println("# -niinSC - from Table 01 - DRN2670 (NIINSC)                        #");
+		System.out.println("# -02 - from Table 02 - DRN9480 (RET CODE)                          #");
+		System.out.println("# -odrc - from Table 03 - DRN4690 (ODRC)                            #");
+		System.out.println("# -dac - from  Table 05 - DRN2640 (DAC)                             #");
+		System.out.println("# -RNJC - from Table 06 - DRN2750 (RNJC)                            #");
+		System.out.println("# -pic - from Table 07 - DRN2867 (PIC)                              #");
+		System.out.println("# -RNCC - from Table 08 - DRN2910 (RNCC)                            #");
+		System.out.println("# -RNFC - from Table 09 - DRN2920 (RNFC)                            #");
 		System.out.println("# -type2 - from Table 10 - Type of Item Identification Code(TYPE II)#");
-		System.out.println("# -RPDMRC - from Table 11 - Reference or Reason Code (RPDMRC)       #");
-		System.out.println("# -RNVC - from Table 12 - Reference Number Variation Code (RNVC)    #");
-		System.out.println("# -ncbCode - from Table 13(NCB CODE)|Table 15(NCAGE CODE)|Table 18  #");
-		System.out.println("# -RNSC - from Table 14 - Reference Number Status Code (RNSC)       #");
-		System.out.println("# -isc - from  Table 20 - Item Standardization Code (ISC)           #");
-		System.out.println("# -ncagesd - from Table 24 - NCAGE Status Designator Code           #");
-		System.out.println("# -UFSDD - from Table 25 - US Foreign/D Designator Code (US F/DDC)  #");
-		System.out.println("# -TSC - from Table 26 - Transaction Status Code (TSC)              #");
-		System.out.println("# -USI - from Table 28 - Using Service Code (USI SERV CODE)         #");
-		System.out.println("# -slf - from Table 29 - Shelf-Life Code                            #");
-		System.out.println("# -phrase - from Table 30 - Phrase Codes (PHRASE)                   #");
-		System.out.println("# -UIC - from Table 31 - Unit of Issue Code (UIC)                   #");
-		System.out.println("# -qupc - from Table 32 - Quantity per Unit Pack Code (QUPC)        #");
-		System.out.println("# -aac - from  Table 33 - Acquisition Advice Code (AAC)             #");
-		System.out.println("# -ciic - from Table 34 - Controlled Inventory Item Code            #");
-		System.out.println("# -UOM - from Table 36 - Unit of Measure of Related NSN             #");
-		System.out.println("# -SOSC - from Table 37 - Source of Supply Code (SOSC)              #");
-		System.out.println("# -SOSMC - from Table 38 - Source of Supply Modifier Codes (SOSMC)  #");
+		System.out.println("# -RPDMRC - from Table 11 - DRN4765 (RPDMRC)                        #");
+		System.out.println("# -RNVC - from Table 12 - DRN4780 (RNVC)                            #");
+		System.out.println("# -ncbCodes - from Table 13 (DRN4130 + DRN2833 + DRN4130 + DRN4140) #");
+		System.out.println("# -RNSC - from Table 14 - DRN2923 (RNSC)                            #");
+		System.out.println("# -isc - from  Table 20 - DRN2650 (ISC)                             #");
+		System.out.println("# -ncagesd - from Table 24 - DRN2694 (NCAGESD)                      #");
+		System.out.println("# -UFSDD - from Table 25 - DRN4235 (US F/DDC)                       #");
+		System.out.println("# -TSC - from Table 26 - DRN5156 (TSC)                              #");
+		System.out.println("# -USI - from Table 28 - DRN0745 (USI SERV CODE)                    #");
+		System.out.println("# -slf - from Table 29 - DRN2493 (Shelf-Life Code)                  #");
+		System.out.println("# -phrase - from Table 30 - DRN2862 (PHRASE)                        #");
+		System.out.println("# -UIC - from Table 31 - DRN3050 (UIC)                              #");
+		System.out.println("# -qupc - from Table 32 - DRN6106 (QUPC)                            #");
+		System.out.println("# -aac - from  Table 33 - DRN2507 (AAC)                             #");
+		System.out.println("# -ciic - from Table 34 - DRN2863 (CIIC)                            #");
+		System.out.println("# -UOM - from Table 36 - DRN0107 (CIIC)                             #");
+		System.out.println("# -SOSC - from Table 37 - DRN3690 (SOSC)                            #");
+		System.out.println("# -SOSMC - from Table 38 - DRN2948 (SOSMC)                          #");
 		System.out.println("# -repCode - from Table 39 - Reparability Code (REP CODE)           #");
-		System.out.println("# -dC - from  Table 41 - Demilitarization Code A                    #");
-		System.out.println("# -adpe - from  Table 126 - US ADPE Identification Code             #");
-		System.out.println("# -pmiC - from Table 128 - US Precious Metals Indicator Code (PMIC) #");
-		System.out.println("# -typeOE - from Table 129 - Type of Organizational Entity Code     #");
-		System.out.println("# -4RCC - from Table 130 - Reason for Return/Notification Code      #");
-		System.out.println("# -RFC - from Table 131 - Request for Codification and Registration #");
-		System.out.println("# -rc - from Table 136 - Reason Codes for proposed cancellation NSN #");
+		System.out.println("# -dC - from  Table 41 - DRN0167 (DEMIL CODE)                       #");
+		System.out.println("# -adpe - from  Table 126 - DRN0801 (ADPE)                          #");
+		System.out.println("# -pmiC - from Table 128 - DRN0802 (PMIC)                           #");
+		System.out.println("# -typeOE - from Table 129 - DRN4238 (TYPE OE CODE)                 #");
+		System.out.println("# -4RCC - from Table 130 - DRN9975 (REASON FOR RESPONSE)            #");
+		System.out.println("# -RFC - from Table 131 - DRN0950 (RFC)                             #");
+		System.out.println("# -rc - from Table 136 - DRN6998 (REASON CANCEL CODES)              #");
 		System.out.println("# -spc - from Table 137 - US State and Canadian Province Codes      #");
 		System.out.println("# -mrrc - from Table 138 - NSN Maintenance Request Reason Codes     #");
-		System.out.println("# -stdMRC - from Table 139 - Master Requirement Code (MRC) Code     #");
+		System.out.println("# -stdMRC - from Table 139 -DRN3445 (STANDARD MRCS)                 #");
 		System.out.println("#                                                                   #");
 		System.out.println("# -tabl091 - converts from Item Name Code(INC) to selected format   #");
 		System.out.println("# -tabl098 - converts from Names By Type to selected format         #");
@@ -531,7 +534,7 @@ public class Main {
 		System.out.println("#                                                                   #");
 		System.out.println("# -script - connects to NCSDatabase and runs SQL commands           #");
 		System.out.println("#                                                                   #");
-		System.out.println("# -mongodb<option> - converts according option. Insert into MongoDB.#");
+		System.out.println("# -mongodb<-option> - converts according option. Insert into MongoDB.#");
 		System.out.println("#                                                                   #");		
 		System.out.println("# -params - shows its default parameters from mrd.properties file.  #");
 		footer();
@@ -549,7 +552,7 @@ public class Main {
 	private static void footer() {
 		System.out.println("#                                                                   #");
 		System.out.println("# Use: NCSTools.jar -option <source-file> [xml|json|sql|ddl] or     #");
-		System.out.println("#      NCSTools.jar -mongodb-<option>  <source-file>                #");
+		System.out.println("#      NCSTools.jar -mongodb<-option>  <source-file>                #");
 		System.out.println("#####################################################################");
 
 		System.out.println("\n");
