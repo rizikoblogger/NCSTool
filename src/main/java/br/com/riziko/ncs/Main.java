@@ -228,7 +228,7 @@ public class Main {
 				TypeConverter.convertRNVC(args[1], args[2]);
 				findIt = true;
 			}
-			if (args[0].equals("-ncbCodes")) {
+			if (args[0].equals("-RNAAC")) {
 				TypeConverter.convertNCBCode(args[1], args[2]);
 				findIt = true;
 			}
@@ -358,58 +358,9 @@ public class Main {
 			}
 			
 			if (args[0].contains("-mongodb")) {
-				ScriptRunner scriptRunner = new ScriptRunner();
-				String option = args[0].substring(8);
-				String collection = args[0].substring(9);
-				TraditionalReader reader = new TraditionalReader();
-				reader.open(args[1],StandardCharsets.UTF_8);				
-				
-				if("-tabl091".equals(option)) {
-					Tabl091Digester digester = new Tabl091Digester();
-					String line = "";
-					while ((line = reader.readLine()) != null) {
-						scriptRunner.insertIntoMongoDB(collection,
-						TypeConverter.convert(digester.digest(line),"json"));
-					}
-					findIt = true;					
-				}
-				if("-tabl098".equals(option)) {
-					Tabl098Digester digester = new Tabl098Digester();
-					String line = "";
-					while ((line = reader.readLine()) != null) {
-						scriptRunner.insertIntoMongoDB(collection,
-						TypeConverter.convert(digester.digest(line),"json"));
-					}
-					findIt = true;					
-				}
-				if("-tabl120".equals(option)) {
+				MongoRunner.run(args);	
+				findIt = true;					
 					
-					Tabl120Digester digester = new Tabl120Digester();
-					String line = "";
-					while ((line = reader.readLine()) != null) {
-						scriptRunner.insertIntoMongoDB(collection,
-						TypeConverter.convert(digester.digest(line),"json"));
-					}
-					findIt = true;					
-				}
-				if("-tabl347".equals(option)) {
-					Tabl347Digester digester = new Tabl347Digester();
-					String line = "";
-					while ((line = reader.readLine()) != null) {
-						scriptRunner.insertIntoMongoDB(collection,
-						TypeConverter.convert(digester.digest(line),"json"));
-					}
-					findIt = true;					
-				}
-				if("-H4".equals(option)) {
-					NCSEntityDigester entityDigester = new NCSEntityDigester();					
-					for(NCSEntity entity:entityDigester.execute(args[1])) {
-						scriptRunner.insertIntoMongoDB(collection,
-						TypeConverter.convert(entity,"json"));
-					}
-					
-					findIt = true;					
-				} 
 			}	  
 			
 			if (args[0].equals("-params")) {
@@ -466,7 +417,7 @@ public class Main {
 		System.out.println("# -type2 - from Table 10 - Type of Item Identification Code(TYPE II)#");
 		System.out.println("# -RPDMRC - from Table 11 - DRN4765 (RPDMRC)                        #");
 		System.out.println("# -RNVC - from Table 12 - DRN4780 (RNVC)                            #");
-		System.out.println("# -ncbCodes - from Table 13 (DRN4130 + DRN2833 + DRN4130 + DRN4140) #");
+		System.out.println("# -RNAAC - from Table 13+ (DRN4130 + DRN2833 + DRN4130 + DRN4140)   #");
 		System.out.println("# -RNSC - from Table 14 - DRN2923 (RNSC)                            #");
 		System.out.println("# -isc - from  Table 20 - DRN2650 (ISC)                             #");
 		System.out.println("# -ncagesd - from Table 24 - DRN2694 (NCAGESD)                      #");
