@@ -63,7 +63,6 @@ public class ScriptRunner {
 	public ScriptRunner() {
 		header();
 		init();
-		connect();
 		Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
 		mongoLogger.setLevel(Level.SEVERE); 
 	}
@@ -161,7 +160,6 @@ public class ScriptRunner {
 		final String CONSOLE_INFO_SUCESS = "Console.info.success";
 		final String CONSOLE_INFO_FAILURE = "Console.info.failure";
 
-		init();
 		connect();
 		try {
 			Map<String, StringBuilder> sql = new HashMap<>();
@@ -255,7 +253,7 @@ public class ScriptRunner {
 	 * @return
 	 */
 	private static boolean insertIntoDatabase(Map<String, StringBuilder> tables) {
-
+		connect();
 		boolean success = true;
 
 		println(Messages.getString("Console.menu.content.explanation.1") + Instant.now()); //$NON-NLS-1$
