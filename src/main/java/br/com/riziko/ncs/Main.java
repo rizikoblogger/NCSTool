@@ -3,18 +3,10 @@
  */
 package br.com.riziko.ncs;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import br.com.riziko.ncs.core.model.digester.NCSEntityDigester;
-import br.com.riziko.ncs.core.model.digester.Tabl091Digester;
-import br.com.riziko.ncs.core.model.digester.Tabl098Digester;
-import br.com.riziko.ncs.core.model.digester.Tabl120Digester;
-import br.com.riziko.ncs.core.model.digester.Tabl347Digester;
-import br.com.riziko.ncs.core.model.tir.NCSEntity;
 import br.com.riziko.ncs.core.tool.PropertieReader;
-import br.com.riziko.ncs.core.tool.TraditionalReader;
 import br.com.riziko.ncs.core.tool.TypeConverter;
 
 /**
@@ -362,6 +354,16 @@ public class Main {
 				findIt = true;					
 					
 			}	  
+			
+			// Adicional Nacional 
+			if (args[0].contains("-classe")) {
+				TypeConverter. convertClasseNacional(args[1], args[2]);
+				findIt = true;					
+			}	
+			if (args[0].contains("-atividadeEconomica")) {
+				TypeConverter.convertAtividadeEconomica(args[1], args[2]);
+				findIt = true;					
+			}
 			
 			if (args[0].equals("-params")) {
 				header();
