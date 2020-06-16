@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>br.com.riziko</groupId>
 			<artifactId>NCSCore</artifactId>
-			<version>2.0.1</version>
+			<version>2.0.3</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
 		<dependency>
