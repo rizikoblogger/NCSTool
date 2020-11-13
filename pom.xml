@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.riziko</groupId>
 	<artifactId>NCSTools</artifactId>
-	<version>2.0.3</version>
+	<version>3.0.0-Alpha</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven-project-info-reports-plugin>3.0.0</maven-project-info-reports-plugin>
