@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.riziko</groupId>
 	<artifactId>NCSTools</artifactId>
-	<version>3.0.0-Alpha</version>
+	<version>2.0.3</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven-project-info-reports-plugin>3.0.0</maven-project-info-reports-plugin>
@@ -29,10 +29,17 @@
 			<version>1.4.193</version>
 		</dependency>
 		<dependency>
-			<groupId>br.com.riziko.ncs.jpa</groupId>
-			<artifactId>NCSDatabase</artifactId>
-			<version>1.0.1</version>
+			<groupId>br.com.riziko.ncs</groupId>
+			<artifactId>NCSDataModel</artifactId>
+			<version>1.0.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.2.18</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
