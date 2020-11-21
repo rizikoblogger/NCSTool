@@ -436,7 +436,7 @@ public class Main {
 		System.out.println("# -qupc - from Table 32 - DRN6106 (QUPC)                            #");
 		System.out.println("# -aac - from  Table 33 - DRN2507 (AAC)                             #");
 		System.out.println("# -ciic - from Table 34 - DRN2863 (CIIC)                            #");
-		System.out.println("# -UOM - from Table 36 - DRN0107 (CIIC)                             #");
+		System.out.println("# -UOM - from Table 36 - DRN0107 (UOM)                              #");
 		System.out.println("# -SOSC - from Table 37 - DRN3690 (SOSC)                            #");
 		System.out.println("# -SOSMC - from Table 38 - DRN2948 (SOSMC)                          #");
 		System.out.println("# -repCode - from Table 39 - Reparability Code (REP CODE)           #");

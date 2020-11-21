@@ -184,19 +184,19 @@ public class ScriptRunner {
 
 			println(Messages.getString("Console.versioning.inputDateofSSR") + "[" + today + "]");
 			Date dateOfSSR = DateConverter.fromJulianToDate(keyboard.next());
-			tVersioning.setDateOfSSR(dateOfSSR);
+			//tVersioning.setDateOfSSR(dateOfSSR);
 
 			println(Messages.getString("Console.versioning.inputDateofMRD") + "[" + today + "]");
 			Date dateOfMRD = DateConverter.fromJulianToDate(keyboard.next());
-			tVersioning.setDateOfMRD(dateOfMRD);
+			//tVersioning.setDateOfMRD(dateOfMRD);
 
 			println(Messages.getString("Console.versioning.inputDateofKHN") + "[" + today + "]");
 			Date dateOfKHN = DateConverter.fromJulianToDate(keyboard.next());
-			tVersioning.setDateOfKHN(dateOfKHN);
+			//tVersioning.setDateOfKHN(dateOfKHN);
 
 			println(Messages.getString("Console.versioning.inputDateofKFF") + "[" + today + "]");
 			Date dateOfKFF = DateConverter.fromJulianToDate(keyboard.next());
-			tVersioning.setDateOfKFF(dateOfKFF);
+			//tVersioning.setDateOfKFF(dateOfKFF);
 
 			tVersioning.setId(LocalDate.now().toEpochDay());
 			tVersioning.setNoteOfVersion("Import from NCSTools/ScriptRunner.");
