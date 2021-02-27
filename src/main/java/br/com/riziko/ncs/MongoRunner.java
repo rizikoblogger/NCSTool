@@ -7,8 +7,10 @@ import java.io.FileNotFoundException;
 import java.nio.charset.StandardCharsets;
 
 import br.com.riziko.ncs.core.model.digester.DACDigester;
+import br.com.riziko.ncs.core.model.digester.DescricaoDigester;
 import br.com.riziko.ncs.core.model.digester.NCBCodeDigester;
 import br.com.riziko.ncs.core.model.digester.NCSEntityDigester;
+import br.com.riziko.ncs.core.model.digester.ProdutoDigester;
 import br.com.riziko.ncs.core.model.digester.RNCCDigester;
 import br.com.riziko.ncs.core.model.digester.RNFCDigester;
 import br.com.riziko.ncs.core.model.digester.RNJCDigester;
@@ -143,6 +145,22 @@ public class MongoRunner {
 		}
 		if("-RNAAC".equals(option)) {
 			NCBCodeDigester digester = new NCBCodeDigester();
+			String line = "";
+			while ((line = reader.readLine()) != null) {
+				scriptRunner.insertIntoMongoDB(collection,
+				TypeConverter.convert(digester.digest(line),"json"));
+			}						
+		}
+		if("-produto".equals(option)) {
+			ProdutoDigester digester = new ProdutoDigester();
+			String line = "";
+			while ((line = reader.readLine()) != null) {
+				scriptRunner.insertIntoMongoDB(collection,
+				TypeConverter.convert(digester.digest(line),"json"));
+			}						
+		}
+		if("-descricao".equals(option)) {
+			DescricaoDigester digester = new DescricaoDigester();
 			String line = "";
 			while ((line = reader.readLine()) != null) {
 				scriptRunner.insertIntoMongoDB(collection,

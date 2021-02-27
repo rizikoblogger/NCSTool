@@ -498,7 +498,7 @@ public class Main {
 		System.out.println("#                                                                   #");
 		System.out.println("# -script - connects to NCSDatabase and runs SQL commands           #");
 		System.out.println("#                                                                   #");
-		System.out.println("# -mongodb<-option> - converts according option. Insert into MongoDB.#");
+		System.out.println("# -mongodb<-option> -converts according option. Insert into MongoDB.#");
 		System.out.println("#                                                                   #");		
 		System.out.println("# -params - shows its default parameters from mrd.properties file.  #");
 		footer();
