@@ -364,6 +364,15 @@ public class Main {
 				TypeConverter.convertAtividadeEconomica(args[1], args[2]);
 				findIt = true;					
 			}
+			if (args[0].contains("-produto")) {
+				TypeConverter.convertProduto(args[1], args[2]);
+				findIt = true;					
+			}
+			if (args[0].contains("-descricao")) {
+				TypeConverter.convertDescricao(args[1], args[2]);
+				findIt = true;					
+			}
+			
 			
 			if (args[0].equals("-params")) {
 				header();
@@ -478,6 +487,8 @@ public class Main {
 		System.out.println("# -mrd120 - converts from traditional MRD file 120                  #");
 		System.out.println("# -mrd300 - converts from traditional MRD file 300                  #");
 		System.out.println("# -mrd500 - converts from traditional MRD file 500                  #");
+		System.out.println("# -produto - converts from CTNRJ/'Produto' Model                    #");
+		System.out.println("# -descricao - converts from CTNRJ/'Descricao' Model                #");
 		System.out.println("#                                                                   #");
 		System.out.println("# -contacts - converts from Segment8 to Native 'List of Contacts'   #");
 		System.out.println("#                                                                   #");
