@@ -29,10 +29,11 @@
 			<version>1.4.193</version>
 		</dependency>
 		<dependency>
-			<groupId>br.com.riziko.ncs.jpa</groupId>
-			<artifactId>NCSDatabase</artifactId>
-			<version>1.0.1</version>
+			<groupId>br.com.riziko.ncs</groupId>
+			<artifactId>NCSDataModel</artifactId>
+			<version>1.0.0</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>
