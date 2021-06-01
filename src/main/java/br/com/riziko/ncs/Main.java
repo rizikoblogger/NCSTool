@@ -5,6 +5,7 @@ package br.com.riziko.ncs;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Map.Entry;
 
 import br.com.riziko.ncs.core.tool.PropertieReader;
 import br.com.riziko.ncs.core.tool.TypeConverter;
@@ -132,6 +133,10 @@ public class Main {
 			}
 			if (args[0].equals("-tabl462")) {
 				TypeConverter.convertTabl462(args[1], args[2]);
+				findIt = true;
+			}
+			if (args[0].equals("-tabl557")) {
+				TypeConverter.convertTabl557(args[1], args[2]);
 				findIt = true;
 			}
 			if (args[0].equals("-mrd06p1")) {
@@ -347,23 +352,22 @@ public class Main {
 				ScriptRunner scriptRunner = new ScriptRunner();
 				scriptRunner.importProcedure(args[1]);
 				findIt = true;
-			}
-			
-			if (args[0].contains("-mongodb")) {
-				MongoRunner.run(args);	
-				findIt = true;					
-					
-			}	  
+			}		
 			
 			// Adicional Nacional 
 			if (args[0].contains("-classe")) {
 				TypeConverter. convertClasseNacional(args[1], args[2]);
 				findIt = true;					
 			}	
-			if (args[0].contains("-atividadeEconomica")) {
-				TypeConverter.convertAtividadeEconomica(args[1], args[2]);
+			
+			// Create TIR
+			if (args[0].contains("-tir")) {
+				for(Entry<String, StringBuilder> entry:ScriptRunner.createTIR().entrySet()) {
+					System.out.println(entry.getValue().toString());
+				}
 				findIt = true;					
-			}
+			}	
+			
 			
 			if (args[0].equals("-params")) {
 				header();
@@ -432,7 +436,7 @@ public class Main {
 		System.out.println("# -qupc - from Table 32 - DRN6106 (QUPC)                            #");
 		System.out.println("# -aac - from  Table 33 - DRN2507 (AAC)                             #");
 		System.out.println("# -ciic - from Table 34 - DRN2863 (CIIC)                            #");
-		System.out.println("# -UOM - from Table 36 - DRN0107 (CIIC)                             #");
+		System.out.println("# -UOM - from Table 36 - DRN0107 (UOM)                              #");
 		System.out.println("# -SOSC - from Table 37 - DRN3690 (SOSC)                            #");
 		System.out.println("# -SOSMC - from Table 38 - DRN2948 (SOSMC)                          #");
 		System.out.println("# -repCode - from Table 39 - Reparability Code (REP CODE)           #");
@@ -452,6 +456,7 @@ public class Main {
 		System.out.println("# -tabl099 - converts from Federal Supply Class to selected format  #");
 		System.out.println("# -tabl363 - converts from Non-approved INC to selected format      #");
 		System.out.println("# -tabl364 - converts from Pseudo INC Key-word INC                  #");
+		System.out.println("# -tabl557 - converts from Approved words for Item Names and Words  #");
 		System.out.println("# -tabl990 - converts from REPL_NCAGE_3595 INC for cancelled ones   #");
 		System.out.println("# -tabl076 - converts from Active Federal Supply Class / Group      #");
 		System.out.println("# -tabl120 - converts from Edits for INC Requirement (Edit Guide 1) #");
@@ -485,10 +490,6 @@ public class Main {
 		System.out.println("#                                                                   #");
 		System.out.println("# -ncssXml - converts from NCSSXML (to json only)                   #");
 		System.out.println("#                                                                   #");
-		System.out.println("# -script - connects to NCSDatabase and runs SQL commands           #");
-		System.out.println("#                                                                   #");
-		System.out.println("# -mongodb<-option> - converts according option. Insert into MongoDB.#");
-		System.out.println("#                                                                   #");		
 		System.out.println("# -params - shows its default parameters from mrd.properties file.  #");
 		footer();
 
@@ -497,7 +498,7 @@ public class Main {
 	private static void header() {
 		System.out.println("\n");
 		System.out.println("#####################################################################");
-		System.out.println("#              NCS Tools version 0.0.1 (April 07, 2020)             #");
+		System.out.println("#              NCS Tools version 3.0.0-alpha (October 07, 2020)     #");
 		System.out.println("#####################################################################");
 		System.out.println("#                                                                   #");
 	}
@@ -505,7 +506,7 @@ public class Main {
 	private static void footer() {
 		System.out.println("#                                                                   #");
 		System.out.println("# Use: NCSTools.jar -option <source-file> [xml|json|sql|ddl] or     #");
-		System.out.println("#      NCSTools.jar -mongodb<-option>  <source-file>                #");
+		System.out.println("#                                                                   #");
 		System.out.println("#####################################################################");
 
 		System.out.println("\n");

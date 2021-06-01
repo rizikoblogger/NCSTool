@@ -10,7 +10,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -26,21 +27,12 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 
+import br.com.riziko.ncs.core.tool.DateConverter;
 import br.com.riziko.ncs.core.tool.SplitPipes;
 import br.com.riziko.ncs.core.tool.TraditionalReader;
 import br.com.riziko.ncs.core.tool.TraditionalWriter;
 import br.com.riziko.ncs.core.tool.TypeConverter;
-import br.com.riziko.ncs.jpa.entity.TCharacteristic;
-import br.com.riziko.ncs.jpa.entity.TEntity;
-import br.com.riziko.ncs.jpa.entity.TIdentification;
-import br.com.riziko.ncs.jpa.entity.TMaterialManagement;
-import br.com.riziko.ncs.jpa.entity.TMoeRule;
-import br.com.riziko.ncs.jpa.entity.TNote;
-import br.com.riziko.ncs.jpa.entity.TPackagingData;
-import br.com.riziko.ncs.jpa.entity.TReference;
-import br.com.riziko.ncs.jpa.entity.TReplacement;
-import br.com.riziko.ncs.jpa.entity.TStandardizationRelationship;
-import br.com.riziko.ncs.jpa.entity.TVersioning;
+import br.com.riziko.ncs.datamodel.*;
 
 /**
  * @author Rogerio
@@ -154,7 +146,8 @@ public class ScriptRunner {
 
 		return true;
 	}
-
+	
+	
 	private static void createTIRDatabase() {
 
 		final String CONSOLE_INFO_SUCESS = "Console.info.success";
@@ -181,7 +174,7 @@ public class ScriptRunner {
 
 	private static boolean startVersioning() {
 		try {
-			Instant today = Instant.now();
+			Date today = new Date();
 			tVersioning = new TVersioning();
 			Scanner keyboard = new Scanner(System.in);
 
@@ -190,22 +183,22 @@ public class ScriptRunner {
 			tVersioning.setVersion(version);
 
 			println(Messages.getString("Console.versioning.inputDateofSSR") + "[" + today + "]");
-			Instant dateOfSSR = Instant.parse(keyboard.next());
-			tVersioning.setDateOfSSR(dateOfSSR);
+			Date dateOfSSR = DateConverter.fromJulianToDate(keyboard.next());
+			//tVersioning.setDateOfSSR(dateOfSSR);
 
 			println(Messages.getString("Console.versioning.inputDateofMRD") + "[" + today + "]");
-			Instant dateOfMRD = Instant.parse(keyboard.next());
-			tVersioning.setDateOfMRD(dateOfMRD);
+			Date dateOfMRD = DateConverter.fromJulianToDate(keyboard.next());
+			//tVersioning.setDateOfMRD(dateOfMRD);
 
 			println(Messages.getString("Console.versioning.inputDateofKHN") + "[" + today + "]");
-			Instant dateOfKHN = Instant.parse(keyboard.next());
-			tVersioning.setDateOfKHN(dateOfKHN);
+			Date dateOfKHN = DateConverter.fromJulianToDate(keyboard.next());
+			//tVersioning.setDateOfKHN(dateOfKHN);
 
 			println(Messages.getString("Console.versioning.inputDateofKFF") + "[" + today + "]");
-			Instant dateOfKFF = Instant.parse(keyboard.next());
-			tVersioning.setDateOfKFF(dateOfKFF);
+			Date dateOfKFF = DateConverter.fromJulianToDate(keyboard.next());
+			//tVersioning.setDateOfKFF(dateOfKFF);
 
-			tVersioning.setId(Instant.now().getEpochSecond());
+			tVersioning.setId(LocalDate.now().toEpochDay());
 			tVersioning.setNoteOfVersion("Import from NCSTools/ScriptRunner.");
 
 			keyboard.close();
@@ -256,7 +249,7 @@ public class ScriptRunner {
 		connect();
 		boolean success = true;
 
-		println(Messages.getString("Console.menu.content.explanation.1") + Instant.now()); //$NON-NLS-1$
+		println(Messages.getString("Console.menu.content.explanation.1") + new Date()); //$NON-NLS-1$
 		Stream<StringBuilder> stream = tables.values().stream();
 
 		for (StringBuilder sb : stream.collect(Collectors.toList())) {
@@ -274,11 +267,11 @@ public class ScriptRunner {
 			}
 
 		}
-		println(Messages.getString("Console.menu.content.explanation.2") + Instant.now());
+		println(Messages.getString("Console.menu.content.explanation.2") + new Date());
 		return success;
 	}
 
-	private static HashMap<String, StringBuilder> createTIR() {
+	public static HashMap<String, StringBuilder> createTIR() {
 		HashMap<String, StringBuilder> tables = new HashMap<>();
 		tables.put(TCharacteristic.class.getName(), TypeConverter.toDDL(new TCharacteristic()));
 		tables.put(TEntity.class.getName(), TypeConverter.toDDL(new TEntity()));
@@ -292,6 +285,7 @@ public class ScriptRunner {
 		tables.put(TStandardizationRelationship.class.getName(),
 				TypeConverter.toDDL(new TStandardizationRelationship()));
 		tables.put(TVersioning.class.getName(), TypeConverter.toDDL(new TVersioning()));
+		tables.put(TNatoStockNumberRoot.class.getName(), TypeConverter.toDDL(new TNatoStockNumberRoot()));
 		return tables;
 	}
 
