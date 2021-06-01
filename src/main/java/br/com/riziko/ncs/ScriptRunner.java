@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package br.com.riziko.ncs;
 
@@ -11,10 +11,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Scanner;
+import java.time.temporal.TemporalField;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -30,26 +28,26 @@ import br.com.riziko.ncs.core.tool.SplitPipes;
 import br.com.riziko.ncs.core.tool.TraditionalReader;
 import br.com.riziko.ncs.core.tool.TraditionalWriter;
 import br.com.riziko.ncs.core.tool.TypeConverter;
-import br.com.riziko.ncs.jpa.entity.TCharacteristic;
-import br.com.riziko.ncs.jpa.entity.TEntity;
-import br.com.riziko.ncs.jpa.entity.TIdentification;
-import br.com.riziko.ncs.jpa.entity.TMaterialManagement;
-import br.com.riziko.ncs.jpa.entity.TMoeRule;
-import br.com.riziko.ncs.jpa.entity.TNote;
-import br.com.riziko.ncs.jpa.entity.TPackagingData;
-import br.com.riziko.ncs.jpa.entity.TReference;
-import br.com.riziko.ncs.jpa.entity.TReplacement;
-import br.com.riziko.ncs.jpa.entity.TStandardizationRelationship;
-import br.com.riziko.ncs.jpa.entity.TVersioning;
+import br.com.riziko.ncs.datamodel.TCharacteristic;
+import br.com.riziko.ncs.datamodel.TEntity;
+import br.com.riziko.ncs.datamodel.TIdentification;
+import br.com.riziko.ncs.datamodel.TMaterialManagement;
+import br.com.riziko.ncs.datamodel.TMoeRule;
+import br.com.riziko.ncs.datamodel.TNote;
+import br.com.riziko.ncs.datamodel.TPackagingData;
+import br.com.riziko.ncs.datamodel.TReference;
+import br.com.riziko.ncs.datamodel.TReplacement;
+import br.com.riziko.ncs.datamodel.TStandardizationRelationship;
+import br.com.riziko.ncs.datamodel.TVersioning;
 
 /**
  * @author Rogerio
- * 
+ *
  */
 public class ScriptRunner {
 
 	private static final Logger LOGGER = Logger.getLogger(ScriptRunner.class.getName());
-	private static final Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );	
+	private static final Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
 
 	static Connection conn;
 	static String user;
@@ -64,9 +62,9 @@ public class ScriptRunner {
 		header();
 		init();
 		Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
-		mongoLogger.setLevel(Level.SEVERE); 
+		mongoLogger.setLevel(Level.SEVERE);
 	}
-	
+
 	private static void header() {
 		println("\n"); //$NON-NLS-1$
 		println(Messages.getString("Console.menu.console.header.1")); //$NON-NLS-1$
@@ -139,11 +137,11 @@ public class ScriptRunner {
 
 	public boolean insertIntoMongoDB(String collection, StringBuilder json) {
 
-		mongoLogger.setLevel(Level.SEVERE); 
+		mongoLogger.setLevel(Level.SEVERE);
 
 		MongoClient mongoClient = MongoClients.create(databaseUri);
 		MongoDatabase database = mongoClient.getDatabase(catalog);
-		
+
 		try {
 			database.getCollection(collection).insertOne(Document.parse(json.toString()));
 		} catch (Exception e) {
@@ -191,19 +189,19 @@ public class ScriptRunner {
 
 			println(Messages.getString("Console.versioning.inputDateofSSR") + "[" + today + "]");
 			Instant dateOfSSR = Instant.parse(keyboard.next());
-			tVersioning.setDateOfSSR(dateOfSSR);
+			tVersioning.setDateOfSSR(new Date(dateOfSSR.getEpochSecond()));
 
 			println(Messages.getString("Console.versioning.inputDateofMRD") + "[" + today + "]");
 			Instant dateOfMRD = Instant.parse(keyboard.next());
-			tVersioning.setDateOfMRD(dateOfMRD);
+			tVersioning.setDateOfMRD(new Date(dateOfMRD.getEpochSecond()));
 
 			println(Messages.getString("Console.versioning.inputDateofKHN") + "[" + today + "]");
 			Instant dateOfKHN = Instant.parse(keyboard.next());
-			tVersioning.setDateOfKHN(dateOfKHN);
+			tVersioning.setDateOfKHN(new Date(dateOfKHN.getEpochSecond()));
 
 			println(Messages.getString("Console.versioning.inputDateofKFF") + "[" + today + "]");
 			Instant dateOfKFF = Instant.parse(keyboard.next());
-			tVersioning.setDateOfKFF(dateOfKFF);
+			tVersioning.setDateOfKFF(new Date(dateOfKFF.getEpochSecond()));
 
 			tVersioning.setId(Instant.now().getEpochSecond());
 			tVersioning.setNoteOfVersion("Import from NCSTools/ScriptRunner.");
@@ -248,9 +246,9 @@ public class ScriptRunner {
 
 	/**
 	 * DELETE and UPDATE commands will be avoided
-	 * 
-	 * @param hashMap
-	 * @return
+	 *
+	 * @param tables to be inserted as java.util.Map
+	 * @return true if successful
 	 */
 	private static boolean insertIntoDatabase(Map<String, StringBuilder> tables) {
 		connect();
