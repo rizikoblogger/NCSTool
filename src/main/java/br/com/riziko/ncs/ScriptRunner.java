@@ -1,11 +1,9 @@
-/**
- *
- */
 package br.com.riziko.ncs;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.Charset;
+
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -55,12 +53,11 @@ public class ScriptRunner {
 	static String catalog;
 	static String driver;
 
-	static TVersioning tVersioning;
 
 	public ScriptRunner() {
 		header();
 		init();
-		Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
+		Logger.getLogger( "org.mongodb.driver" );
 		mongoLogger.setLevel(Level.SEVERE);
 	}
 
@@ -75,7 +72,6 @@ public class ScriptRunner {
 
 	private static void init() {
 
-		final String UTF8 = "UTF-8";
 
 		final String USER_HOME = System.getProperty("user.home");
 		final String SEPARATOR = System.getProperty("file.separator");
@@ -83,7 +79,7 @@ public class ScriptRunner {
 
 		try {
 			TraditionalReader reader = new TraditionalReader();
-			reader.open(FILE_NAME, Charset.forName(UTF8));
+			reader.open(FILE_NAME, StandardCharsets.UTF_8);
 			println(Messages.getString("Console.connection.existConnectionParameters"));
 			reader.close();
 		} catch (FileNotFoundException e) {
@@ -96,7 +92,7 @@ public class ScriptRunner {
 
 		TraditionalReader reader = new TraditionalReader();
 		try {
-			reader.open(FILE_NAME, Charset.forName(UTF8));
+			reader.open(FILE_NAME, StandardCharsets.UTF_8);
 			String line = reader.readLine();
 			reader.close();
 			String[] params = SplitPipes.split(line);
@@ -112,7 +108,7 @@ public class ScriptRunner {
 
 	}
 
-	private static boolean connect() {
+	private static void connect() {
 
 		Properties connectionProps = new Properties();
 		connectionProps.put("user", user); //$NON-NLS-1$
@@ -131,10 +127,9 @@ public class ScriptRunner {
 			println(Messages.getString("Console.connection.driverNotFound:" + driver));
 
 		}
-		return true;
 	}
 
-	public boolean insertIntoMongoDB(String collection, StringBuilder json) {
+	public void insertIntoMongoDB(String collection, StringBuilder json) {
 
 		mongoLogger.setLevel(Level.SEVERE);
 
@@ -144,94 +139,21 @@ public class ScriptRunner {
 		try {
 			database.getCollection(collection).insertOne(Document.parse(json.toString()));
 		} catch (Exception e) {
-			System.out.println("Erro de conexao com MongoDB:\n" + e.getMessage() + "::"+ json.toString());
-			return false;
+			println("Erro de conexao com MongoDB:\n" + e.getMessage() + "::"+ json.toString());
+
 		}
 		mongoClient.close();
 
-		return true;
 	}
 
-	private static void createTIRDatabase() {
-
-		final String CONSOLE_INFO_SUCESS = "Console.info.success";
-		final String CONSOLE_INFO_FAILURE = "Console.info.failure";
-
-		connect();
-		try {
-			Map<String, StringBuilder> sql = new HashMap<>();
-			sql.put("Select", new StringBuilder("Select * from " + tVersioning.getClass().getName()));
-			boolean success = insertIntoDatabase(sql);
-			if (success)
-				println(Messages.getString(CONSOLE_INFO_SUCESS));
-			if (!success)
-				println(Messages.getString(CONSOLE_INFO_FAILURE));
-		} catch (Exception e) {
-			boolean success = insertIntoDatabase(createTIR());
-			if (success)
-				println(Messages.getString(CONSOLE_INFO_SUCESS));
-			if (!success)
-				println(Messages.getString(CONSOLE_INFO_FAILURE));
-		}
-
-	}
-
-	private static boolean startVersioning() {
-		try {
-			Instant today = Instant.now();
-			tVersioning = new TVersioning();
-			Scanner keyboard = new Scanner(System.in);
-
-			println(Messages.getString("Console.versioning.inputVersionNumber"));
-			int version = Long.valueOf(keyboard.next()).intValue();
-			tVersioning.setVersion(version);
-
-			println(Messages.getString("Console.versioning.inputDateofSSR") + "[" + today + "]");
-			Instant dateOfSSR = Instant.parse(keyboard.next());
-			tVersioning.setDateOfSSR(new Date(dateOfSSR.getEpochSecond()));
-
-			println(Messages.getString("Console.versioning.inputDateofMRD") + "[" + today + "]");
-			Instant dateOfMRD = Instant.parse(keyboard.next());
-			tVersioning.setDateOfMRD(new Date(dateOfMRD.getEpochSecond()));
-
-			println(Messages.getString("Console.versioning.inputDateofKHN") + "[" + today + "]");
-			Instant dateOfKHN = Instant.parse(keyboard.next());
-			tVersioning.setDateOfKHN(new Date(dateOfKHN.getEpochSecond()));
-
-			println(Messages.getString("Console.versioning.inputDateofKFF") + "[" + today + "]");
-			Instant dateOfKFF = Instant.parse(keyboard.next());
-			tVersioning.setDateOfKFF(new Date(dateOfKFF.getEpochSecond()));
-
-			tVersioning.setId(Instant.now().getEpochSecond());
-			tVersioning.setNoteOfVersion("Import from NCSTools/ScriptRunner.");
-
-			keyboard.close();
-			HashMap<String, StringBuilder> list = new HashMap<>();
-
-			StringBuilder creationCommand = TypeConverter.toDDL(tVersioning);
-			list.put(tVersioning.getClass().getName(), creationCommand);
-
-			insertIntoDatabase(list);
-
-			StringBuilder insertCommand = TypeConverter.toSQL(tVersioning);
-			list.put(tVersioning.getClass().getName(), insertCommand);
-
-			insertIntoDatabase(list);
-
-		} catch (Exception e) {
-			println(Messages.getString("Console.versioning.errorOnParsingDate"));
-			return false;
-		}
-		return true;
-	}
 
 	public void importProcedure(String fileName) {
-		String line = "";
+		String line;
 		HashMap<String, StringBuilder> lista = new HashMap<>();
 		TraditionalReader reader = new TraditionalReader();
 
 		try {
-			reader.open(fileName, Charset.forName("UTF-8"));
+			reader.open(fileName, StandardCharsets.UTF_8);
 			while ((line = reader.readLine()) != null) {
 				lista.put(line, new StringBuilder(line));
 			}
@@ -246,12 +168,10 @@ public class ScriptRunner {
 	/**
 	 * DELETE and UPDATE commands will be avoided
 	 *
-	 * @param tables to be inserted as java.util.Map
-	 * @return true if successful
+	 * @param tables - a set of key value to insert
 	 */
-	private static boolean insertIntoDatabase(Map<String, StringBuilder> tables) {
+	private static void insertIntoDatabase(Map<String, StringBuilder> tables) {
 		connect();
-		boolean success = true;
 
 		println(Messages.getString("Console.menu.content.explanation.1") + Instant.now()); //$NON-NLS-1$
 		Stream<StringBuilder> stream = tables.values().stream();
@@ -266,16 +186,14 @@ public class ScriptRunner {
 
 			} catch (SQLException se) {
 				LOGGER.log(Level.SEVERE, se.getMessage());
-				success = false;
 
 			}
 
 		}
 		println(Messages.getString("Console.menu.content.explanation.2") + Instant.now());
-		return success;
 	}
 
-	private static HashMap<String, StringBuilder> createTIR() {
+	public static Map<String, StringBuilder> createTIR() {
 		HashMap<String, StringBuilder> tables = new HashMap<>();
 		tables.put(TCharacteristic.class.getName(), TypeConverter.toDDL(new TCharacteristic()));
 		tables.put(TEntity.class.getName(), TypeConverter.toDDL(new TEntity()));
@@ -292,12 +210,7 @@ public class ScriptRunner {
 		return tables;
 	}
 
-	public static void mommentum() {
-
-		createTIRDatabase();
-		startVersioning();
-	}
-
+	@SuppressWarnings("Replace this use of System.out or System.err by a logger")
 	private static void println(String text) {
 		System.out.println(text);
 	}
