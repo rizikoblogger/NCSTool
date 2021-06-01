@@ -24,3 +24,6 @@ hs_err_pid*
 
 # avoiding maven target pushing
 target/*
+
+# IDEA settings
+.idea/
